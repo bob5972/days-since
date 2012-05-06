@@ -264,6 +264,6 @@ int main(int argc, char *argv[])
 		mainData.dbFile = NULL;
 	}
 	
-	printf("Done.\n");
+	//printf("Done.\n");
 	return 0;
 }
