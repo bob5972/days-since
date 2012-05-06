@@ -13,6 +13,7 @@ using namespace boost::gregorian;
 #define DB_FILE_BAK DB_FILE ".bak"
 
 typedef struct Entry {
+	int index;
 	MBString name;
 	date startDate;
 	int numTimes;
@@ -101,15 +102,39 @@ void printEntry(const Entry &e)
 	average = dd.days();
 	average = average / e.numTimes;
 	
-	printf("%20s: %10d %10.1f %10d\n", e.name.cstr(), daysSince, average, e.intervalDays);
+	printf("[%d] %20s: %10d %10.1f\n",
+	       e.index, e.name.cstr(), daysSince, average);
+}
+
+int findEntry(const MBString &name)
+{
+	int index = -1;
+	int numEntries;
+	
+	numEntries = mainData.entries.size();
+	
+	for (int x = 0; x < numEntries; x++) {
+		if (mainData.entries[x].name == name) {
+			index = x;
+			break;
+		}
+	}
+			
+	if (index == -1) {
+		index = atoi(name.cstr());
+		if (index < 0 || index >= numEntries) {
+			PANIC("Unable to find \"%s\"\n", name.cstr());
+		}
+	}
+	
+	return index;
 }
 
 
 int main(int argc, char *argv[])
 {
 	int numEntries;
-	bool modified = FALSE;
-	
+	bool modified = FALSE;	
 	
 	CharReaderInterface dbFileReader = {
 		NULL,
@@ -125,17 +150,87 @@ int main(int argc, char *argv[])
 		PANIC("Unable to open db file.\n");
 	}
 	
-	Warning("Reading numEntries...\n");
 	numEntries = p.readInt();
-	Warning("numEntries = %d\n", numEntries);
 	p.eatWhitespace();
 	mainData.entries.resize(numEntries);
 	
 	for (int x = 0; x < numEntries; x++) {
 		mainData.entries[x] = readEntry(p);
+		mainData.entries[x].index = x;
 	}
 	
-	printf("%20s: %10s %10s %10s\n", "Name", "Days", "Avg", "Target");
+	if (argc > 1) {
+		MBString cmd = argv[1];
+		
+		if (cmd == "-h") {
+			PANIC("No help documentation for days-since.\n");
+			exit(1);
+		} else if (cmd == "add") {
+			if (argc < 3) {
+				PANIC("Bad arguments to add\n");
+			}
+			
+			MBString name = argv[2];
+			Entry e;
+			
+			e.name = name;
+			e.startDate = day_clock::local_day();
+			e.numTimes = 1;
+			e.intervalDays = -1;
+			e.lastTime = e.startDate;
+			e.index = mainData.entries.size();
+			
+			mainData.entries.push(e);			
+			modified = TRUE;
+			
+			printf("Add [%d] %s\n", e.index, name.cstr());
+		} else if (cmd == "reset") {
+			int index = -1;
+			if (argc < 3) {
+				PANIC("Bad arguments to reset\n");
+			}
+			
+			MBString name = argv[2];
+			
+			index = findEntry(name);
+			name = mainData.entries[index].name;
+			
+			mainData.entries[index].numTimes++;
+			mainData.entries[index].lastTime = day_clock::local_day();
+			modified = TRUE;
+			
+			printf("Reset [%d] %s\n", index, name.cstr());
+		} else if (cmd == "del") {
+			int index;
+			
+			if (argc < 3) {
+				PANIC("Bad arguments to del\n");
+			}
+			
+			MBString name = argv[2];
+			index = findEntry(name);
+			name = mainData.entries[index].name;
+			
+			for (int x = index; x < mainData.entries.size() - 1; x++) {
+				mainData.entries[x] = mainData.entries[x+1];
+				mainData.entries[x].index = x;
+			}
+			mainData.entries.shrink();
+			modified = TRUE;
+			
+			printf("Removed [%d] %s\n", index, name.cstr());
+		} else if (cmd == "status") {
+			/*
+			 * Default action: Display the state.
+			 */
+		} else {
+			PANIC("Unknown command: %s\n", cmd.cstr());
+		}			
+	}		
+	
+	numEntries = mainData.entries.size();
+	
+	printf("    %20s: %10s %10s\n", "Name", "Days", "Avg");
 	for (int x = 0; x < numEntries; x++) {
 		printEntry(mainData.entries[x]);
 	}
@@ -156,6 +251,7 @@ int main(int argc, char *argv[])
 		
 		Dumper d(&dbFileWriter);
 		
+		numEntries = mainData.entries.size();
 		d.writeInt(numEntries);
 		d.endLine();
 		
