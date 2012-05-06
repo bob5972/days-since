@@ -17,7 +17,7 @@ TARGET=days-since
 CFLAGS = ${DEFAULT_CFLAGS} -I $(BUILDROOT) $(INCLUDE_FLAGS)
 CPPFLAGS = ${CFLAGS}
 
-#LIBFLAGS = -lm
+LIBFLAGS = -lboost_date_time
 
 CC=gcc
 CXX=g++
