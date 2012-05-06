@@ -55,9 +55,6 @@ else
 	echo 'MACOS=1' >> $CONFIG_MK;
 fi;
 
-echo '#define ARCH_AMD64 1' >> $CONFIG_H;
-echo 'ARCH_AMD64=1' >> $CONFIG_MK;
-
 if [ "$DEBUG" == "" ]; then
 	DEBUG=1;
 fi;
