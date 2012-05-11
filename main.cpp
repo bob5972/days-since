@@ -93,14 +93,20 @@ void printEntry(const Entry &e)
 	double average;
 	date now(day_clock::local_day());
 	date_duration dd;
+	int numTimes;
 	
 	dd = now - e.lastTime;
 	
 	daysSince = dd.days();
 	
+	numTimes = e.numTimes;
+	if (numTimes == 0) {
+		numTimes = 1;
+	}
+	
 	dd = (now - e.startDate);
 	average = dd.days();
-	average = average / e.numTimes;
+	average = average / numTimes;
 	
 	printf("[%d] %20s: %10d %10.1f\n",
 	       e.index, e.name.cstr(), daysSince, average);
