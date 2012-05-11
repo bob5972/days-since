@@ -64,6 +64,10 @@ Entry readEntry(Parser &p)
 	oup.startDate = from_undelimited_string(tmp.cstr());
 	
 	oup.numTimes = p.readInt();
+	if (oup.numTimes < 0) {
+		oup.numTimes = 0;
+	}
+	
 	oup.intervalDays = p.readInt();
 	p.eatWhitespace();
 
@@ -99,14 +103,29 @@ void printEntry(const Entry &e)
 	
 	daysSince = dd.days();
 	
+	ASSERT(e.numTimes >= 0);
 	numTimes = e.numTimes;
 	if (numTimes == 0) {
 		numTimes = 1;
 	}
 	
-	dd = (now - e.startDate);
+	dd = (e.lastTime - e.startDate);
 	average = dd.days();
 	average = average / numTimes;
+	
+	/*
+	 * Count the current period in the average only if
+	 * we've passed the average mark.
+	 * (ie Expect the previous trend to continue.)
+	 *
+	 * If we're at zero times, we've already counted
+	 * the current period.	 
+	 */
+	if (average < daysSince) {
+		dd = (now - e.startDate);
+		average = dd.days();
+		average = average / (e.numTimes + 1);
+	}
 	
 	printf("[%d] %20s: %10d %10.1f\n",
 	       e.index, e.name.cstr(), daysSince, average);

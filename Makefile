@@ -77,6 +77,9 @@ clean:
 distclean: clean
 	rm -rf $(BUILDROOT)/
 	rm -rf config.mk
+	
+install: $(TARGET)
+	./install.sh
 
 #include the generated dependency files
 -include $(addprefix $(DEPDIR)/,$(subst .c,.d,$(C_SOURCES)))
