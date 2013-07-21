@@ -127,8 +127,8 @@ void printEntry(const Entry &e)
 		average = average / (e.numTimes + 1);
 	}
 	
-	printf("[%d] %20s: %10d %10.1f\n",
-	       e.index, e.name.cstr(), daysSince, average);
+	printf("[%d] %20s: %10d %10.1f %10d\n",
+	       e.index, e.name.cstr(), daysSince, average, numTimes);
 }
 
 int findEntry(const MBString &name)
@@ -255,7 +255,7 @@ int main(int argc, char *argv[])
 	
 	numEntries = mainData.entries.size();
 	
-	printf("    %20s: %10s %10s\n", "Name", "Days", "Avg");
+	printf("    %20s: %10s %10s %10s\n", "Name", "Days", "Avg", "Count");
 	for (int x = 0; x < numEntries; x++) {
 		printEntry(mainData.entries[x]);
 	}
