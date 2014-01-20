@@ -188,7 +188,9 @@ int main(int argc, char *argv[])
 		MBString cmd = argv[1];
 		
 		if (cmd == "-h") {
-			PANIC("No help documentation for days-since.\n");
+		    printf("Usage: days-since add name\n");
+		    printf("       days-since reset name/number\n");
+		    printf("       days-since del name/number\n");
 			exit(1);
 		} else if (cmd == "add") {
 			if (argc < 3) {
