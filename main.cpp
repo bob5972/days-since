@@ -4,10 +4,10 @@
 
 using namespace boost::gregorian;
 
-#include "MBString.h"
-#include "Parser.h"
+#include "MBString.hpp"
+#include "Parser.hpp"
 #include "MBVector.h"
-#include "Dumper.h"
+#include "Dumper.hpp"
 
 #define DB_FILE "/home/bob5972/bin/data/days-since.dat"
 #define DB_FILE_BAK DB_FILE ".bak"
@@ -61,7 +61,7 @@ Entry readEntry(Parser &p)
 	oup.name = p.readLine();
 	
 	tmp = p.readLine();
-	oup.startDate = from_undelimited_string(tmp.cstr());
+	oup.startDate = from_undelimited_string(tmp.CStr());
 	
 	oup.numTimes = p.readInt();
 	if (oup.numTimes < 0) {
@@ -72,7 +72,7 @@ Entry readEntry(Parser &p)
 	p.eatWhitespace();
 
 	tmp = p.readLine();	
-	oup.lastTime = from_undelimited_string(tmp.cstr());
+	oup.lastTime = from_undelimited_string(tmp.CStr());
 	
 	return oup;
 }
@@ -128,7 +128,7 @@ void printEntry(const Entry &e)
 	}
 	
 	printf("[%d] %20s: %10d %10.1f %10d\n",
-	       e.index, e.name.cstr(), daysSince, average, numTimes);
+	       e.index, e.name.CStr(), daysSince, average, numTimes);
 }
 
 int findEntry(const MBString &name)
@@ -146,9 +146,9 @@ int findEntry(const MBString &name)
 	}
 			
 	if (index == -1) {
-		index = atoi(name.cstr());
+		index = atoi(name.CStr());
 		if (index < 0 || index >= numEntries) {
-			PANIC("Unable to find \"%s\"\n", name.cstr());
+			PANIC("Unable to find \"%s\"\n", name.CStr());
 		}
 	}
 	
@@ -210,7 +210,7 @@ int main(int argc, char *argv[])
 			mainData.entries.push(e);			
 			modified = TRUE;
 			
-			printf("Add [%d] %s\n", e.index, name.cstr());
+			printf("Add [%d] %s\n", e.index, name.CStr());
 		} else if (cmd == "reset") {
 			int index = -1;
 			if (argc < 3) {
@@ -226,7 +226,7 @@ int main(int argc, char *argv[])
 			mainData.entries[index].lastTime = day_clock::local_day();
 			modified = TRUE;
 			
-			printf("Reset [%d] %s\n", index, name.cstr());
+			printf("Reset [%d] %s\n", index, name.CStr());
 		} else if (cmd == "del") {
 			int index;
 			
@@ -245,13 +245,13 @@ int main(int argc, char *argv[])
 			mainData.entries.shrink();
 			modified = TRUE;
 			
-			printf("Removed [%d] %s\n", index, name.cstr());
+			printf("Removed [%d] %s\n", index, name.CStr());
 		} else if (cmd == "status") {
 			/*
 			 * Default action: Display the state.
 			 */
 		} else {
-			PANIC("Unknown command: %s\n", cmd.cstr());
+			PANIC("Unknown command: %s\n", cmd.CStr());
 		}			
 	}		
 	
