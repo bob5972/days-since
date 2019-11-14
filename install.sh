@@ -1,4 +1,4 @@
 #!/bin/bash
 
 make
-cp -i build/days-since ~/bin/days-since
+cp -i build/days-since ~/bin/local/days-since
