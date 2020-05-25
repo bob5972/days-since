@@ -7,4 +7,4 @@ This was intended to track things like backups or raid scrubbing that need to
 be performed periodically, and knowing how long since the last time it's been
 completed can be helpful.
 
-See LICENSE.txt for licensing information.
+See LICENSE for licensing information.
