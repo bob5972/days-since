@@ -1,7 +1,7 @@
 # -*- mode: Makefile;-*-
 #
 # This file is part of days-since.
-# Copyright (c) 2015 Michael Banack <bob5972@banack.net>
+# Copyright (c) 2015 Michael Banack <github@banack.net>
 #
 # Makefile -- days-since
 
