@@ -19,7 +19,7 @@ jobs:
         submodules: recursive
     - name: setup
       run: sudo apt-get update;
-           sudo apt-get install boost;
+           sudo apt-get install libboost-all-dev;
     - name: configure (debug)
       run: ./configure debug
     - name: make (debug)
