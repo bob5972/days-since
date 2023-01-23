@@ -1,0 +1,29 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+    
+permissions: read-all
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: configure (debug)
+      run: ./configure debug
+    - name: make (debug)
+      run: make
+    - name: test
+      run: make test
+    - name: configure (release)
+      run: ./configure release
+    - name: make (release)
+      run: make
